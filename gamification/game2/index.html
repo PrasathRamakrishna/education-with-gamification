@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Quiz Game</title>
+    <style>
+      body {
+        background-color: #29292b; /* Dark background */
+        color: #ffffff; /* White text */
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        color: #ebff57; /* Gold color */
+        margin-top: 20px;
+      }
+
+      #imageContainer {
+        margin: 20px auto;
+        max-width: 40%;
+        text-align: center;
+      }
+
+      #displayImage {
+        max-width: 60%;
+        height: auto;
+        border-radius: 10px;
+        border: 3px solid #ebff57; /* Gold border */
+      }
+
+      #questionContainer,
+      #levelCompleteContainer {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 50%;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border-radius: 5px;
+        border: 2px solid #ebff57; /* Gold border */
+        margin: 10px 0;
+        width: calc(100% - 24px); /* Adjust width to fit padding and border */
+      }
+
+      button {
+        background-color: #ebff57; /* Gold button */
+        color: #29292b; /* Dark text */
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #ebff57; /* Lighter gold on hover */
+      }
+
+      #feedback {
+        font-size: 1.2em;
+        color: #4caf50; /* Green feedback text */
+      }
+
+      #scoreDisplay {
+        font-size: 20px;
+        margin-top: 20px;
+        color: #ebff57; /* Gold score text */
+      }
+
+      #nextImageButton,
+      #nextLevelButton,
+      #exitButton {
+        display: none; /* Initially hidden */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Observe the image carefully</h1>
+    <div id="imageContainer">
+      <img id="displayImage" src="" alt="Image" />
+    </div>
+
+    <div id="questionContainer" style="display: none">
+      <p id="question"></p>
+      <input type="text" id="answerInput" placeholder="Type your answer here" />
+      <button id="submitAnswer">Submit</button>
+      <p id="feedback"></p>
+    </div>
+
+    <div id="levelCompleteContainer" style="display: none">
+      <p id="feedback"></p>
+      <button id="nextLevelButton" style="display: none">Next Level</button>
+    </div>
+
+    <button id="nextImageButton" style="display: none">Next Image</button>
+    <button id="exitButton">Exit Game</button>
+
+    <div id="scoreDisplay">Score: 0</div>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>
