@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knowledge Quest</title>
+    <style>
+      body {
+        background-color: #29292b; /* Dark background */
+        color: #ebff57; /* Light text color for contrast */
+        text-align: center;
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        display: block;
+        margin: 0 auto;
+        background-color: #f0f0f0; /* Light background for canvas */
+        border: 3px solid #ebff57; /* Highlight border */
+        border-radius: 10px; /* Rounded corners */
+      }
+      h1 {
+        color: #ebff57;
+        margin: 20px 0;
+        font-size: 2.5em;
+      }
+      .image-box {
+        margin-top: 20px;
+        display: none;
+        background-color: #333; /* Darker background for image box */
+        border: 2px solid #ebff57;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        color: #ebff57; /* Light text color for contrast */
+      }
+      #imageDisplay {
+        width: 150px;
+        height: 150px;
+      }
+      #imageName {
+        font-size: 1.5em;
+        margin-top: 10px;
+      }
+      #thankYouMessage {
+        display: none;
+        font-size: 2em;
+        margin-top: 30px;
+        color: #ebff57;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Knowledge Quest</h1>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <div class="image-box" id="imageBox">
+      <img id="imageDisplay" src="" alt="Item" />
+      <div id="imageName"></div>
+    </div>
+    <div id="thankYouMessage">
+      Congratulations! You have completed all the alphabets!
+    </div>
+
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+
+      let imagesLoaded = false; // Flag to check if images are fully loaded
+      let gamePaused = false; // Flag to check if game is paused
+      let currentImageIndex = 0; // Counter to track which image to show next
+
+      // Load player and item images
+      const playerImage = new Image();
+      playerImage.src = "images/jackie-chan.png"; // Ensure path is correct
+      const itemImage = new Image();
+      itemImage.src = "images/magic-stone.png"; // Ensure path is correct
+
+      // Player settings
+      let player = {
+        x: 50,
+        y: 350,
+        width: 30,
+        height: 50,
+        speed: 5,
+        dx: 0,
+        dy: 0,
+      };
+
+      // Item settings (magic stone)
+      let item = {
+        x: Math.floor(Math.random() * (canvas.width - 40)),
+        y: Math.floor(Math.random() * (canvas.height - 40)),
+        width: 40,
+        height: 40,
+      };
+
+      // Images and names for display (in ascending order)
+      const images = [
+        { src: "images/apple.jpeg", name: "A - Apple" },
+        { src: "images/ball.jpeg", name: "B - Ball" },
+        { src: "images/cat.png", name: "C - Cat" },
+        // Add more images as needed
+      ];
+
+      // Ensure images are loaded before drawing
+      playerImage.onload = function () {
+        itemImage.onload = function () {
+          imagesLoaded = true; // Mark that both images are loaded
+          gameLoop(); // Start game loop after loading
+        };
+      };
+
+      // Draw player with image
+      function drawPlayer() {
+        if (imagesLoaded) {
+          ctx.drawImage(
+            playerImage,
+            player.x,
+            player.y,
+            player.width,
+            player.height
+          );
+        }
+      }
+
+      // Draw item with image
+      function drawItem() {
+        if (imagesLoaded) {
+          ctx.drawImage(itemImage, item.x, item.y, item.width, item.height);
+        }
+      }
+
+      // Move player
+      function movePlayer() {
+        player.x += player.dx;
+        player.y += player.dy;
+
+        // Boundaries
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.width > canvas.width)
+          player.x = canvas.width - player.width;
+        if (player.y < 0) player.y = 0;
+        if (player.y + player.height > canvas.height)
+          player.y = canvas.height - player.height;
+      }
+
+      // Clear canvas
+      function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Detect collision with item (magic stone)
+      function detectCollision() {
+        if (
+          player.x < item.x + item.width &&
+          player.x + player.width > item.x &&
+          player.y < item.y + item.height &&
+          player.y + player.height > item.y
+        ) {
+          if (!gamePaused) {
+            if (currentImageIndex < images.length) {
+              showImage();
+              resetItem(); // Move stone to new position
+            } else {
+              showThankYouMessage(); // Show the thank-you message
+              gamePaused = true; // Stop the game
+            }
+          }
+        }
+      }
+
+      // Reset item to a new random position
+      function resetItem() {
+        item.x = Math.floor(Math.random() * (canvas.width - 40));
+        item.y = Math.floor(Math.random() * (canvas.height - 40));
+      }
+
+      // Update game state
+      function update() {
+        if (!imagesLoaded || gamePaused) return; // Ensure images are loaded before updating
+
+        clearCanvas();
+        drawPlayer(); // Draw player
+        drawItem(); // Draw item
+        movePlayer();
+        detectCollision();
+      }
+
+      // Game loop
+      function gameLoop() {
+        update();
+        requestAnimationFrame(gameLoop); // Request next frame
+      }
+
+      // Show image and name in ascending order
+      function showImage() {
+        const selectedImage = images[currentImageIndex];
+        document.getElementById("imageDisplay").src = selectedImage.src;
+        document.getElementById("imageName").innerText = selectedImage.name;
+        document.getElementById("imageBox").style.display = "block";
+
+        // Increment the index for the next image
+        currentImageIndex++;
+      }
+
+      // Show thank-you message
+      function showThankYouMessage() {
+        document.getElementById("imageBox").style.display = "none"; // Hide the image box
+        document.getElementById("thankYouMessage").style.display = "block"; // Show the thank-you message
+      }
+
+      // Move player with arrow keys
+      function keyDown(e) {
+        if (e.key === "ArrowRight") player.dx = player.speed;
+        if (e.key === "ArrowLeft") player.dx = -player.speed;
+        if (e.key === "ArrowUp") player.dy = -player.speed;
+        if (e.key === "ArrowDown") player.dy = player.speed;
+      }
+
+      function keyUp(e) {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") player.dx = 0;
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") player.dy = 0;
+      }
+
+      document.addEventListener("keydown", keyDown);
+      document.addEventListener("keyup", keyUp);
+    </script>
+  </body>
+</html>
