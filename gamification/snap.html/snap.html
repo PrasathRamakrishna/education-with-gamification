@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Math Adventure</title>
+    <style>
+      body {
+        background-color: #29292b; /* Dark background */
+        margin: 0;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background-image: url(images/sky-bg.jpeg);
+      }
+
+      canvas {
+        display: block;
+        margin: 20px auto;
+        border: 3px solid #ebff57; /* Gold border */
+        background: rgba(255, 255, 255, 0.8); /* Light canvas background */
+        border-radius: 10px;
+      }
+
+      #gameCanvas {
+        width: 100%;
+        max-width: 700px;
+        height: 500px;
+      }
+
+      .header {
+        text-align: center;
+        font-size: 30px;
+        color: #ebff57; /* Gold color for the header */
+        margin: 20px 0;
+      }
+
+      .score-board {
+        font-size: 20px;
+        color: #ebff57; /* Light green color */
+        text-align: center;
+        margin-top: -10px;
+      }
+
+      /* Additional styling for text */
+      .score-board,
+      .header {
+        text-shadow: 1px 1px 2px #000; /* Shadow for better readability */
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="header">Math Adventure</h1>
+    <p class="score-board">Catch the numbers and have fun learning!</p>
+
+    <canvas id="gameCanvas" width="700" height="500"></canvas>
+
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // Load player character image
+      const playerImage = new Image();
+      playerImage.src = "images/doraemon-packet.jpg"; // Replace with actual path to the player image
+
+      // Load additional image (e.g., star)
+      const starImage = new Image();
+      starImage.src = "images/star.png"; // Replace with actual path to the star image
+
+      // Load sound effects
+      const catchSound = new Audio("sounds/catch.mp3"); // Replace with actual path to sound
+      const missSound = new Audio("sounds/miss.mp3"); // Replace with actual path to sound
+
+      // Player properties
+      const player = {
+        x: canvas.width / 2 - 25,
+        y: canvas.height - 50,
+        width: 50,
+        height: 50,
+        speed: 5,
+        moveLeft: false,
+        moveRight: false,
+      };
+
+      // Falling numbers properties
+      const numbers = [];
+      const baseNumberSpeed = 1; // Base speed for falling numbers
+      let numberSpeed = baseNumberSpeed;
+      const speedIncreaseInterval = 10; // Points after which speed will increase
+      const speedIncrement = 0.2; // Increment for each speed increase
+      let score = 0;
+      let gameOver = false;
+
+      // Random number generator
+      function getRandomNumber() {
+        return Math.floor(Math.random() * 21) - 10; // Random number between -10 and 10
+      }
+
+      // Add a new number at random x position
+      function createFallingNumber() {
+        const number = {
+          x: Math.random() * (canvas.width - 20),
+          y: 0,
+          value: getRandomNumber(),
+          color: getRandomColor(),
+        };
+        numbers.push(number);
+      }
+
+      // Get random color for numbers
+      function getRandomColor() {
+        const colors = ["#FF4500", "#32CD32", "#1E90FF", "#FFD700", "#FF69B4"];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      // Move player
+      function movePlayer() {
+        if (player.moveLeft && player.x > 0) {
+          player.x -= player.speed;
+        }
+        if (player.moveRight && player.x + player.width < canvas.width) {
+          player.x += player.speed;
+        }
+      }
+
+      // Detect collision with player
+      function checkCollision(number) {
+        return (
+          number.x > player.x &&
+          number.x < player.x + player.width &&
+          number.y > player.y &&
+          number.y < player.y + player.height
+        );
+      }
+
+      // Update game state
+      function updateGame() {
+        if (gameOver) return; // Exit if the game is over
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Move and draw player
+        movePlayer();
+        ctx.drawImage(
+          playerImage,
+          player.x,
+          player.y,
+          player.width,
+          player.height
+        );
+
+        // Draw additional image (star)
+        ctx.drawImage(starImage, 50, 70, 40, 40); // Example fixed position for the star
+
+        // Handle falling numbers
+        for (let i = numbers.length - 1; i >= 0; i--) {
+          const number = numbers[i];
+          number.y += numberSpeed;
+
+          ctx.font = "bold 24px Comic Sans MS";
+          ctx.fillStyle = number.color;
+          ctx.fillText(number.value, number.x, number.y);
+
+          // Check if caught by player
+          if (checkCollision(number)) {
+            score += number.value; // Increase or decrease score based on value
+            catchSound.play(); // Play sound effect
+            numbers.splice(i, 1); // Remove the number
+          }
+
+          // Remove if out of canvas
+          if (number.y > canvas.height) {
+            numbers.splice(i, 1);
+            missSound.play(); // Play sound when missed
+          }
+        }
+
+        // Display score
+        ctx.font = "20px Comic Sans MS";
+        ctx.fillStyle = "#29292b"; /* Light green for score text */
+        ctx.fillText("Score: " + score, 10, 30);
+        ctx.fillText(
+          "Target: " + (score >= 50 ? "You win!" : "Reach 50"),
+          10,
+          50
+        );
+
+        // Gradual speed increase
+        numberSpeed =
+          baseNumberSpeed +
+          Math.floor(score / speedIncreaseInterval) * speedIncrement;
+
+        // Check for game over condition
+        if (score >= 50) {
+          gameOver = true;
+          ctx.font = "36px Comic Sans MS";
+          ctx.fillStyle = "red";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "Congratulations! You Win!",
+            canvas.width / 2,
+            canvas.height / 2
+          );
+          ctx.font = "24px Comic Sans MS";
+          ctx.fillText(
+            "Refresh to play again",
+            canvas.width / 2,
+            canvas.height / 2 + 40
+          );
+        }
+      }
+
+      // Game loop
+      function gameLoop() {
+        updateGame();
+        requestAnimationFrame(gameLoop);
+      }
+
+      // Create numbers at intervals
+      setInterval(createFallingNumber, 1000);
+
+      // Key events for player movement
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") {
+          player.moveLeft = true;
+        }
+        if (e.key === "ArrowRight") {
+          player.moveRight = true;
+        }
+      });
+
+      window.addEventListener("keyup", (e) => {
+        if (e.key === "ArrowLeft") {
+          player.moveLeft = false;
+        }
+        if (e.key === "ArrowRight") {
+          player.moveRight = false;
+        }
+      });
+
+      // Start the game after both images are loaded
+      playerImage.onload = starImage.onload = () => gameLoop();
+    </script>
+  </body>
+</html>
