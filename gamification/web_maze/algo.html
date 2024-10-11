@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BFS and DFS</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="bfs-div">
+        <b><h1>Breadth-First Search (BFS)</h1></b>
+        It is a graph traversal algorithm used to explore nodes and edges in a
+        graph or tree structure. <br />It starts from a given node (called the
+        root or starting node) and explores all of its neighboring nodes first
+        before moving on to their neighbors. It does this level by level,
+        meaning it explores all nodes at one depth level before moving on to the
+        next level. <br /><br /><b>Simple Steps:</b>
+        <list>
+          <ol>
+            Start from the root node (or any starting point).
+          </ol>
+          <ol>
+            Visit all its immediate neighbors (the nodes directly connected to
+            it).
+          </ol>
+          <ol>
+            Move to the next level and visit the neighbors of those nodes.
+          </ol>
+          <ol>
+            Continue this process until all nodes are visited.
+          </ol>
+          <pre>
+              A
+            /   \
+           B     C
+          / \   / \
+         D   E F   G
+      
+          </pre>
+        </list>
+        <p>
+          BFS starts at A, visits B and C (the neighbors of A), then moves to
+          the next level and visits D, E, F, and G. BFS explores nodes
+          breadth-wise, i.e., level by level, from left to right.
+        </p>
+      </div>
+
+      <div class="dfs-div"></div>
+        <b><h1>Depth-First Search (DFS)</h1></b>
+        It is a graph traversal algorithm used to explore nodes and edges in a graph or tree. Unlike BFS, which explores nodes level by level, DFS explores as far as possible along each branch before backtracking.<br /><br /><br /><b>Simple Steps:</b>
+        <list>
+          <ol>
+            Start from the root node (or any starting point).
+          </ol>
+          <ol>
+            Explore as far as possible along each branch before moving to the next branch
+          </ol>
+          <ol>
+            Visit nodes by going deep into the graph before backtracking to explore other paths.
+          </ol>
+          <ol>
+            Continue this process until all nodes are visited.
+          </ol>
+          <pre>
+              A
+            /   \
+           B     C
+          / \   / \
+         D   E F   G
+      
+          </pre>
+        </list>
+        <p>
+            DFS starts at A, explores as deep as possible along one branch, for example, going from A to B to D (leftmost path).
+            After reaching D, it backtracks to B and then explores E.
+            Once it finishes exploring B’s children, it backtracks to A and explores C.
+            It continues by exploring F and then G.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
