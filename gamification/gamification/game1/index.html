@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creativity Game</title>
+    <style>
+      body {
+        background-color: #29292b; /* Dark background */
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .game-container {
+        padding: 20px;
+        background-color: #ebff57;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 80%;
+        max-width: 600px;
+      }
+
+      h1 {
+        color: #29292b; /* Gold color */
+      }
+
+      #question-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      .object {
+        width: 100px;
+        height: 100px;
+        margin: 0 10px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 8px;
+      }
+
+      #object-1 {
+        background-image: url("../../images/sun.png");
+      }
+
+      #object-2 {
+        background-image: url("../../images/glasses.png");
+      }
+
+      #submit-button,
+      #next-button {
+        background-color: #29292b; /* Gold button */
+        color: #ebff57; /* Dark text */
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+      }
+
+      #submit-button:hover,
+      #next-button:hover {
+        background-color: #29292b; /* Lighter gold on hover */
+      }
+
+      #feedback {
+        font-size: 1.2em;
+        margin: 10px 0;
+        color: #4caf50; /* Green feedback text */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <h1>Creativity Game</h1>
+      <div id="question-container">
+        <p>Combine the objects:</p>
+        <div id="object-1" class="object"></div>
+        <p>+</p>
+        <div id="object-2" class="object"></div>
+      </div>
+      <input type="text" id="answer-input" placeholder="Enter your answer" />
+      <button id="submit-button">Submit</button>
+      <p id="feedback"></p>
+      <button id="next-button" style="display: none">Next</button>
+    </div>
+    <script>
+      const questions = [
+        {
+          object1: "Sun",
+          object2: "Glasses",
+          answers: ["Sunglasses", "Solar Glasses", "sunglass"],
+          img1: "../../images/sun.png",
+          img2: "../../images/glasses.jpeg",
+          answerImg: "../../images/sunglasses.webp",
+        },
+        {
+          object1: "Rain",
+          object2: "Bow",
+          answers: ["Rainbow", "Arc of Colors"],
+          img1: "../../images/rain.jpeg",
+          img2: "../../images/bow.png",
+          answerImg: "../../images/rainbow.png",
+        },
+        {
+          object1: "Snow",
+          object2: "Man",
+          answers: ["Snowman", "Snow Person", "Snow man"],
+          img1: "../../images/snow.jpeg",
+          img2: "../../images/man.jpeg",
+          answerImg: "../../images/snowman.jpeg",
+        },
+        {
+          object1: "Star",
+          object2: "Fish",
+          answers: ["Starfish", "Star Fish"],
+          img1: "../../images/star.png",
+          img2: "../../images/fish.jpeg",
+          answerImg: "../../images/starfish.jpeg",
+        },
+      ];
+
+      let currentQuestion = 0;
+
+      function loadQuestion() {
+        const question = questions[currentQuestion];
+        document.getElementById(
+          "object-1"
+        ).style.backgroundImage = `url(${question.img1})`;
+        document.getElementById(
+          "object-2"
+        ).style.backgroundImage = `url(${question.img2})`;
+        document.getElementById("answer-input").value = "";
+        document.getElementById("feedback").textContent = "";
+        document.getElementById("next-button").style.display = "none";
+      }
+
+      function checkAnswer() {
+        const userAnswer = document
+          .getElementById("answer-input")
+          .value.trim()
+          .toLowerCase();
+        const correctAnswers = questions[currentQuestion].answers.map(
+          (answer) => answer.toLowerCase()
+        );
+
+        if (correctAnswers.includes(userAnswer)) {
+          document.getElementById("feedback").textContent = "Correct! 🎉";
+          document.getElementById("next-button").style.display = "inline-block";
+          document.getElementById(
+            "object-1"
+          ).style.backgroundImage = `url(${questions[currentQuestion].answerImg})`;
+          document.getElementById("object-2").style.backgroundImage = "";
+        } else {
+          document.getElementById("feedback").textContent = "Try again!";
+        }
+      }
+
+      function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          loadQuestion();
+        } else {
+          document.getElementById("question-container").innerHTML =
+            "Congratulations! You completed the game! 🎉";
+          document.getElementById("answer-input").style.display = "none";
+          document.getElementById("submit-button").style.display = "none";
+          document.getElementById("next-button").style.display = "none";
+        }
+      }
+
+      document
+        .getElementById("submit-button")
+        .addEventListener("click", checkAnswer);
+      document
+        .getElementById("next-button")
+        .addEventListener("click", nextQuestion);
+
+      loadQuestion();
+    </script>
+  </body>
+</html>
