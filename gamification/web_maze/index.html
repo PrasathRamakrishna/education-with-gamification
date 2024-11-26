@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maze Game</title>
+    <style>
+      #maze {
+        display: grid;
+        grid-template-columns: repeat(10, 30px);
+        grid-gap: 1px;
+        margin-bottom: 20px;
+      }
+      .cell {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .path {
+        background-color: lightgreen;
+      }
+      .wall {
+        background-color: white;
+      }
+      .red {
+        background-color: red;
+      }
+      .marked {
+        background-color: lightgreen;
+      }
+      button {
+        margin-top: 10px;
+        background-color: lavender;
+        border: none;
+      }
+      button:hover {
+        background-color: rgb(194, 194, 243);
+        cursor: pointer;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Maze Game</h1>
+    <div id="maze"></div>
+    <button id="solve-dfs">Solve Using DFS</button><br />
+    <button id="solve-bfs">Solve Using BFS</button><br />
+    <button id="generate-maze">Generate Random Maze</button><br />
+    <button id="try-now-dfs">Try Now Using DFS</button><br />
+    <button id="try-now-bfs">Try Now Using BFS</button><br />
+    <button class="q-mark" onclick="reAssign()">?</button>
+
+    <script>
+      function reAssign() {
+        window.location.href = "algo.html";
+      }
+
+      const mazeContainer = document.getElementById("maze");
+      let maze = [];
+      let userPath = [];
+      let dfsPath = [];
+      let bfsPath = [];
+      let chosenAlgorithm = "";
+
+      // Generate random maze
+      function generateRandomMaze() {
+        maze = [];
+        for (let i = 0; i < 10; i++) {
+          maze.push(
+            Array.from({ length: 10 }, () => (Math.random() < 0.2 ? "1" : "0"))
+          );
+        }
+        maze[0][0] = "S"; // Start
+        maze[9][9] = "E"; // End
+
+        // Calculate DFS and BFS paths after generating the maze
+        const start = { row: 0, col: 0 };
+        const end = { row: 9, col: 9 };
+        dfsPath = dfs(start, end);
+        bfsPath = bfs(start, end);
+
+        renderMaze();
+      }
+
+      // Render the maze
+      function renderMaze() {
+        mazeContainer.innerHTML = "";
+        maze.forEach((row, rowIndex) => {
+          row.forEach((cell, cellIndex) => {
+            const cellDiv = document.createElement("div");
+            cellDiv.className = "cell";
+            cellDiv.textContent = cell;
+            cellDiv.dataset.row = rowIndex;
+            cellDiv.dataset.col = cellIndex;
+            if (cell === "1") {
+              cellDiv.classList.add("wall");
+            }
+            mazeContainer.appendChild(cellDiv);
+          });
+        });
+      }
+
+      // BFS algorithm
+      function bfs(start, end) {
+        const queue = [start];
+        const visited = new Set();
+        const parent = {};
+        visited.add(`${start.row},${start.col}`);
+
+        while (queue.length > 0) {
+          const current = queue.shift();
+          const { row, col } = current;
+
+          if (row === end.row && col === end.col) {
+            const path = [];
+            let step = current;
+            while (step) {
+              path.unshift(step);
+              step = parent[`${step.row},${step.col}`];
+            }
+            return path;
+          }
+
+          for (const [dRow, dCol] of [
+            [0, 1],
+            [1, 0],
+            [0, -1],
+            [-1, 0],
+          ]) {
+            const newRow = row + dRow;
+            const newCol = col + dCol;
+            const key = `${newRow},${newCol}`;
+            if (
+              newRow >= 0 &&
+              newRow < 10 &&
+              newCol >= 0 &&
+              newCol < 10 &&
+              maze[newRow][newCol] !== "1" &&
+              !visited.has(key)
+            ) {
+              queue.push({ row: newRow, col: newCol });
+              visited.add(key);
+              parent[key] = { row, col };
+            }
+          }
+        }
+        return [];
+      }
+
+      // DFS algorithm
+      function dfs(start, end) {
+        const stack = [start];
+        const visited = new Set();
+        const parent = {};
+        visited.add(`${start.row},${start.col}`);
+
+        while (stack.length > 0) {
+          const current = stack.pop();
+          const { row, col } = current;
+
+          if (row === end.row && col === end.col) {
+            const path = [];
+            let step = current;
+            while (step) {
+              path.unshift(step);
+              step = parent[`${step.row},${step.col}`];
+            }
+            return path;
+          }
+
+          for (const [dRow, dCol] of [
+            [0, 1],
+            [1, 0],
+            [0, -1],
+            [-1, 0],
+          ]) {
+            const newRow = row + dRow;
+            const newCol = col + dCol;
+            const key = `${newRow},${newCol}`;
+            if (
+              newRow >= 0 &&
+              newRow < 10 &&
+              newCol >= 0 &&
+              newCol < 10 &&
+              maze[newRow][newCol] !== "1" &&
+              !visited.has(key)
+            ) {
+              stack.push({ row: newRow, col: newCol });
+              visited.add(key);
+              parent[key] = { row, col };
+            }
+          }
+        }
+        return [];
+      }
+
+      // Add event listeners to buttons and maze cells
+      function addEventListeners() {
+        document.getElementById("solve-dfs").addEventListener("click", () => {
+          chosenAlgorithm = "dfs";
+          console.log("DFS Path:", dfsPath); // Debug output
+          renderCorrectPath(dfsPath);
+        });
+
+        document.getElementById("solve-bfs").addEventListener("click", () => {
+          chosenAlgorithm = "bfs";
+          console.log("BFS Path:", bfsPath); // Debug output
+          renderCorrectPath(bfsPath);
+        });
+
+        document
+          .getElementById("generate-maze")
+          .addEventListener("click", () => {
+            generateRandomMaze();
+          });
+
+        document.getElementById("try-now-dfs").addEventListener("click", () => {
+          chosenAlgorithm = "dfs";
+          enableUserPathDrawing();
+        });
+
+        document.getElementById("try-now-bfs").addEventListener("click", () => {
+          chosenAlgorithm = "bfs";
+          enableUserPathDrawing();
+        });
+
+        mazeContainer.addEventListener("click", (event) => {
+          if (event.target.classList.contains("cell")) {
+            const row = parseInt(event.target.dataset.row, 10);
+            const col = parseInt(event.target.dataset.col, 10);
+
+            if (maze[row][col] === "1") {
+              alert("Cannot pass through wall.");
+            } else {
+              const correctPath = chosenAlgorithm === "dfs" ? dfsPath : bfsPath;
+              const isCorrect = correctPath.some(
+                (p) => p.row === row && p.col === col
+              );
+
+              userPath.push({ row, col });
+              if (isCorrect) {
+                event.target.classList.add("marked");
+              } else {
+                event.target.classList.add("red");
+                setTimeout(() => event.target.classList.remove("red"), 1000);
+              }
+            }
+          }
+        });
+      }
+
+      // Function to render the correct path (green)
+      function renderCorrectPath(path) {
+        document
+          .querySelectorAll(".cell")
+          .forEach((cell) => cell.classList.remove("path"));
+        path.forEach(({ row, col }) => {
+          const cell = document.querySelector(
+            `.cell[data-row='${row}'][data-col='${col}']`
+          );
+          if (cell) cell.classList.add("path");
+        });
+      }
+
+      // Enable user to select the path
+      function enableUserPathDrawing() {
+        userPath = [];
+      }
+
+      // Initial maze generation
+      generateRandomMaze();
+      addEventListeners();
+    </script>
+  </body>
+</html>
