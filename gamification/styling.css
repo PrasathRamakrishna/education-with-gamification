@@ -1,0 +1,115 @@
+/* Import stylish fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap');
+
+/* General body styling */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #29292B; /* Dark background for the entire page */
+  color: black; /* Light color for text */
+}
+
+/* Navigation bar styling */
+nav {
+  background-color: #EBFF57; /* Bright background for navigation */
+  color: #29292B; /* Dark text color for contrast */
+  height: 8vh;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center align the content */
+  padding: 0 20px;
+  border-bottom: 2px solid #29292B; /* Adds a bottom border for separation */
+}
+
+nav h1 {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif; /* Stylish font for the title */
+  font-size: 2rem;
+}
+
+/* Marquee styling */
+marquee {
+  background-color: red;
+  color: white;
+  height: 30px;
+  line-height: 30px; /* Align text vertically */
+  font-size: large;
+  text-align: center; /* Center align the marquee text */
+  font-family: 'Montserrat', sans-serif; /* Stylish font for marquee */
+}
+
+/* Container for the div cards */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Center align the cards */
+  margin: auto;
+  padding: 20px; /* Add padding around the container */
+}
+
+/* Styling for the div cards */
+.div-1, .div-2, .div-3, .div-4, .div-5, .div-8 {
+  background-color: rgb(246, 240, 240); /* Light background for the divs */
+  height: 20em;
+  width: 30%;
+  min-width: 300px;
+  margin: 10px;
+  border-radius: 8px;
+  border: 2px solid bisque;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  position: relative; /* Allows positioning of hover content */
+  overflow: hidden; /* Prevents content from overflowing */
+  opacity: 1; /* Default opacity */
+}
+
+/* Hover effects - Change opacity */
+.div-1:hover,
+.div-2:hover,
+.div-3:hover,
+.div-4:hover,
+.div-5:hover,
+.div-8:hover {
+  opacity: 0.7; /* Reduce opacity on hover */
+}
+
+/* Ensure divs do not overflow their container */
+.div-1, .div-2, .div-3, .div-4, .div-5, .div-8 {
+  box-sizing: border-box;
+}
+
+/* Specific background images for divs */
+.div-1 {
+  background-image: url('images/jackie-chan-bg.jpg');
+  background-size: cover;
+}
+
+.div-2 {
+  background-image: url('images/doraemon-thumbnail.png');
+  background-color: yellow;
+  background-size: cover;
+}
+
+.div-3 {
+  background-image: url('images/creativity.jpeg');
+  background-size: cover;
+}
+
+.div-4 {
+  background-image: url('images/brain.jpeg');
+  background-size: cover;
+}
+
+.div-5 {
+  background-image: url('images/maths.jpg');
+  background-size: cover;
+}
+
+.div-8 {
+    color: gray;
+  background-image: url('images/maze-thumbnail.png');
+  background-size: cover;
+}
